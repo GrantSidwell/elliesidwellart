@@ -85,7 +85,7 @@
   }
   .work button.view:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
   .work .painting img { box-shadow: 0 1px 2px rgba(20,30,28,.12), 0 12px 30px -12px rgba(20,30,28,.25); }
-  .work .room img { aspect-ratio: 3 / 4; object-fit: cover; width: 100%; }
+  .work .room img { width: 100%; height: auto; }
   .work .room figcaption { font-size: .85rem; color: var(--muted); margin-top: .6rem; }
   .caption {
     grid-column: 1 / -1;
@@ -153,7 +153,6 @@
 
   @media (max-width: 760px) {
     .work { grid-template-columns: 1fr; }
-    .work .room img { aspect-ratio: 4 / 5; }
     .commissions { grid-template-columns: 1fr; }
     .site-nav { gap: 1.25rem; }
     .viewer-bar { flex-wrap: wrap; }
@@ -174,7 +173,7 @@
 <main id="top">
   <section class="intro">
     <h1>Ellie Sidwell</h1>
-    <p>Original paintings of land, sky and light, built up in layers of colour and texture.</p>
+    <p>Original abstract paintings, built up in layers of colour, texture and gesture.</p>
   </section>
 
   <section class="works" id="work" aria-label="Artworks">
@@ -227,7 +226,44 @@
       size: "",
       status: "available",
       image: "images/artwork-01.jpg",
-      room: "images/artwork-01-room.jpg"
+      room: "images/artwork-01-room.jpg",
+      setting: "living room"
+    },
+    {
+      title: "Beige",
+      details: "Mixed media on canvas",
+      size: "40 × 20 in (102 × 51 cm)",
+      status: "available",
+      image: "images/artwork-02.jpg",
+      room: "images/artwork-02-room.jpg",
+      setting: "living room"
+    },
+    {
+      title: "Blue",
+      details: "Mixed media on canvas",
+      size: "30 × 20 in (76 × 51 cm)",
+      status: "available",
+      image: "images/artwork-03.jpg",
+      room: "images/artwork-03-room.jpg",
+      setting: "living room"
+    },
+    {
+      title: "Green",
+      details: "Mixed media on canvas",
+      size: "30 × 20 in (76 × 51 cm)",
+      status: "available",
+      image: "images/artwork-04.jpg",
+      room: "images/artwork-04-room.jpg",
+      setting: "living room"
+    },
+    {
+      title: "Orange",
+      details: "Mixed media on canvas",
+      size: "30 × 20 in (76 × 51 cm)",
+      status: "available",
+      image: "images/artwork-05.jpg",
+      room: "images/artwork-05-room.jpg",
+      setting: "bedroom"
     }
   ];
 
@@ -249,9 +285,9 @@
         </figure>
         <figure class="room">
           <button class="view" data-i="${i}" data-view="room" aria-label="View ${esc(a.title)} in a room">
-            <img src="${esc(a.room)}" alt="${esc(a.title)} shown hanging in a living room" loading="lazy">
+            <img src="${esc(a.room)}" alt="${esc(a.title)} shown hanging in a ${esc(a.setting || "room")}" loading="lazy">
           </button>
-          <figcaption>Shown in a room setting</figcaption>
+          <figcaption>Shown in a ${esc(a.setting || "room")}</figcaption>
         </figure>
         <div class="caption">
           <div>
@@ -273,7 +309,7 @@
   function show(view) {
     const a = artworks[current];
     img.src = view === "room" ? a.room : a.image;
-    img.alt = view === "room" ? `${a.title} shown hanging in a living room` : `${a.title}, painting by Ellie Sidwell`;
+    img.alt = view === "room" ? `${a.title} shown hanging in a ${a.setting || "room"}` : `${a.title}, painting by Ellie Sidwell`;
     toggles.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === view)));
   }
   works.addEventListener("click", e => {
