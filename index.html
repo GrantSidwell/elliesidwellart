@@ -63,13 +63,30 @@
   /* Intro */
   .intro {
     padding: clamp(3rem, 10vw, 8rem) var(--gutter) clamp(2.5rem, 7vw, 5rem);
-    max-width: 60rem;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: clamp(2rem, 6vw, 6rem); align-items: start;
   }
   .intro h1 {
     font: 400 clamp(3rem, 9vw, 7.5rem)/.95 var(--serif);
     margin: 0 0 1.5rem; letter-spacing: -.01em;
   }
   .intro p { margin: 0; max-width: 34rem; color: var(--muted); font-size: 1.125rem; }
+  .signup { display: flex; gap: .5rem; margin-top: 1.5rem; max-width: 30rem; flex-wrap: wrap; }
+  .signup input {
+    flex: 1 1 14rem; min-width: 0; font: 400 1rem/1.2 var(--sans); color: var(--ink);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: .8rem 1.1rem;
+  }
+  .signup input::placeholder { color: var(--muted); }
+  .signup button {
+    font: 500 .95rem/1 var(--sans); color: var(--panel); background: var(--ink);
+    border: 0; border-radius: 999px; padding: .8rem 1.4rem; cursor: pointer;
+  }
+  .signup button:hover { background: var(--accent); }
+  .intro .signup-note { font-size: .9rem; margin-top: .6rem; min-height: 1.4em; }
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .intro .bio { padding-top: clamp(0rem, 1.5vw, 1rem); }
+  .intro .bio p { color: var(--ink); font-size: 1.0625rem; max-width: 38rem; margin: 0 0 1.1rem; }
+  .intro .bio p:last-child { margin-bottom: 0; }
 
   /* Section buttons */
   .tabs {
@@ -113,10 +130,36 @@
   .caption h2 { font: italic 400 1.9rem/1.2 var(--serif); margin: 0; }
   .caption .details { color: var(--muted); font-size: .95rem; margin: .25rem 0 0; }
   .caption .enquire { font-size: .95rem; color: var(--accent); text-underline-offset: 4px; }
+  .status-sold { color: #B4443A; font-weight: 500; letter-spacing: .06em; }
   .status-sold::before {
     content: ""; display: inline-block; width: .5em; height: .5em;
     border-radius: 50%; background: #B4443A; margin-right: .5em; vertical-align: .1em;
   }
+  .caption .price { font: 400 1.35rem/1.2 var(--serif); margin: .35rem 0 0; color: var(--ink); }
+
+  /* Group of small works (e.g. a series) */
+  .work.group { grid-template-columns: 1fr; align-items: start; }
+  .group-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.75rem, 2vw, 1.5rem); margin: 0; padding: 0; list-style: none; }
+  .group-grid figure { margin: 0; }
+  .group-grid { align-items: end; }
+  .group-grid img { width: 100%; height: auto; box-shadow: 0 1px 2px rgba(20,30,28,.12), 0 8px 20px -10px rgba(20,30,28,.25); }
+  .group-grid figcaption { font-size: .85rem; color: var(--muted); margin-top: .45rem; }
+  .group .room { max-width: 48rem; }
+  .group-grid .beside img { box-shadow: none; }
+  .group-grid.even { align-items: start; }
+  .group-grid.even img { aspect-ratio: var(--tile-aspect); object-fit: cover; }
+
+  /* A painting with no room picture: details sit beside it */
+  .work.solo .caption { grid-column: 2; flex-direction: column; align-items: flex-start; }
+  .work.solo .painting { max-width: 36rem; }
+
+  /* A single extra picture shown under a set of paintings */
+  .work.scene { grid-template-columns: 1fr; }
+  .work.scene figure { margin: 0; max-width: 56rem; }
+  .work.scene img { width: auto; max-height: 85vh; }
+  .work.scene figcaption { font-size: .85rem; color: var(--muted); margin-top: .6rem; }
+  .group-info { list-style: none; margin: .6rem 0 0; padding: 0; color: var(--muted); font-size: .95rem; }
+  .group-info li { margin: .15rem 0; }
 
   /* Commissions */
   .commissions {
@@ -171,6 +214,9 @@
 
   @media (max-width: 760px) {
     .work { grid-template-columns: 1fr; }
+    .group-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .intro { grid-template-columns: 1fr; }
+    .work.solo .caption { grid-column: 1; }
     .commissions { grid-template-columns: 1fr; }
     .site-nav { gap: 1.25rem; }
     .viewer-bar { flex-wrap: wrap; }
@@ -190,8 +236,22 @@
 
 <main id="top">
   <section class="intro">
-    <h1>Ellie Sidwell</h1>
-    <p>Original seascapes, landscapes and abstract paintings, built up in layers of colour, texture and gesture.</p>
+    <div>
+      <h1>Ellie Sidwell</h1>
+      <p>Join the studio mailing list and see new works 48 hours before anyone else, hot off the press! Be the first to know about discounts and offers.</p>
+      <!-- Placeholder: not connected to a mailing list service yet, so nothing is sent -->
+      <form class="signup" id="signup" novalidate>
+        <label class="visually-hidden" for="signup-email">Email address</label>
+        <input type="email" id="signup-email" name="email" placeholder="Your email address" autocomplete="email" required>
+        <button type="submit">Join</button>
+      </form>
+      <p class="signup-note" id="signup-note" role="status"></p>
+    </div>
+    <div class="bio">
+      <p>I'm an artist inspired by the beauty of the natural landscape, the changing seasons and the little details that make a place feel special. My work explores colour, texture and atmosphere, creating expressive contemporary interpretations of the British countryside. I love the freedom of loose brushstrokes, building layers using collage, allowing a painting to evolve organically, capturing not just how a landscape looks but how it feels.</p>
+      <p>I'm drawn to the contrast between light and shade, open skies, winding paths, fields and seascapes. My paintings are often abstract or semi abstract with emphasis on movement, energy and the emotion of a place.</p>
+      <p>I create original paintings for people who want to bring colour, character and a connection to nature into their homes. I believe art we have in our homes should bring us joy every day.</p>
+    </div>
   </section>
 
   <div class="gallery" id="gallery">
@@ -247,6 +307,7 @@
       title: "Tidal Light",
       details: "Acrylic on canvas",
       size: "20 × 20 in (51 × 51 cm)",
+      price: "£322",
       status: "available",
       image: "images/artwork-06.jpg",
       room: "images/artwork-06-room.jpg",
@@ -257,6 +318,7 @@
       title: "Pink Horizon",
       details: "Acrylic on canvas",
       size: "20 × 20 in (51 × 51 cm)",
+      price: "£322",
       status: "available",
       image: "images/artwork-07.jpg",
       room: "images/artwork-07-room.jpg",
@@ -267,10 +329,56 @@
       title: "Quiet",
       details: "Acrylic on canvas",
       size: "30 × 30 in (76 × 76 cm)",
+      price: "£725",
       status: "available",
       image: "images/artwork-08.jpg",
       room: "images/artwork-08-room.jpg",
       setting: "dining room"
+    },
+    {
+      section: "seascapes",
+      title: "Marshes",
+      details: "Original painting. Acrylic on canvas",
+      size: "20 × 20 in (51 × 51 cm)",
+      notes: ["Unframed (framing on request)."],
+      price: "£322",
+      status: "available",
+      image: "images/marshes.jpg",
+      room: "images/marshes-wall.jpg",
+      roomCaption: "Marshes on the wall."
+    },
+    {
+      section: "seascapes",
+      title: "Big Sky",
+      details: "Original painting. Acrylic on canvas",
+      size: "20 × 20 in (51 × 51 cm)",
+      notes: ["Unframed (framing on request)."],
+      price: "£322",
+      status: "available",
+      image: "images/big-sky.jpg",
+      room: "images/big-sky-wall.jpg",
+      roomCaption: "Big Sky on the wall."
+    },
+    ...["Moon", "Bay", "Cove"].map(t => ({
+      section: "seascapes",
+      title: t,
+      details: "Original painting. Mixed media collage & acrylic on wood panel",
+      size: "49 × 35 cm",
+      notes: [
+        "Framed in slim pine painted white shadow gap frames.",
+        "Can be sold individually or as a group of 3."
+      ],
+      price: "£215 (group of 3 price £595)",
+      status: "available",
+      image: "images/" + t.toLowerCase() + ".jpg",
+      room: "images/" + t.toLowerCase() + "-frame.jpg",
+      roomCaption: t + " in its frame."
+    })),
+    {
+      section: "seascapes",
+      scene: true,
+      title: "Moon, Bay and Cove on the walls",
+      image: "images/moon-bay-cove-wall.jpg"
     },
 
     /* ---------- Landscapes ---------- */
@@ -279,10 +387,66 @@
       title: "Between the Hills",
       details: "Acrylic on canvas",
       size: "40 × 20 in (102 × 51 cm)",
-      status: "available",
+      status: "sold",
       image: "images/artwork-09.jpg",
       room: "images/artwork-09-room.jpg",
       setting: "living room"
+    },
+    {
+      /* A group: several small paintings shown together, with one wall picture */
+      section: "landscapes",
+      title: "Lines on the Land 1 to 8",
+      group: [1, 2, 3, 4, 5, 6, 7, 8].map(n => ({
+        title: "Lines on the Land " + n,
+        image: "images/lines-on-the-land-" + n + ".jpg"
+      })),
+      room: "images/lines-on-the-land-wall.jpg",
+      setting: "wall",
+      info: [
+        "Original paintings. Mixed media (collage, gold, bronze and silver leaf) and acrylic on wood panel.",
+        "Size: 20 × 20 cm",
+        "Sold individually or as a group.",
+        "Unframed (framing on request)."
+      ],
+      price: "£50 each (group price for all 8 paintings £360)",
+      status: "available"
+    },
+    {
+      section: "landscapes",
+      title: "Chobham Common 1 to 4",
+      group: [1, 2, 3, 4].map(n => ({
+        title: "Chobham Common " + n,
+        image: "images/chobham-common-" + n + ".jpg"
+      })),
+      tileAspect: "4 / 5",   /* show every painting at the same size */
+      room: "images/chobham-common-wall.jpg",
+      roomCaption: "Chobham Common 1 to 4 on the wall.",
+      info: [
+        "Original paintings. Acrylic on canvas in an off white mount.",
+        "Size: 20 × 26 cm",
+        "Sold individually or as a group.",
+        "Unframed but includes a mount (framing on request)."
+      ],
+      price: "£65 each (group price for all 4 paintings £234)",
+      status: "available"
+    },
+    {
+      section: "landscapes",
+      title: "Horizon 1 to 5",
+      /* beside: an extra picture shown right after that painting */
+      group: [1, 2, 3, 4, 5].map(n => ({
+        title: "Horizon " + n,
+        image: "images/horizon-" + n + ".jpg",
+        beside: n === 5 ? { image: "images/horizon-wall-2.jpg", caption: "Horizon series on the wall" } : null
+      })),
+      info: [
+        "Original paintings. Mixed media collage & acrylic on wood panel.",
+        "Framed in slim pine shadow gap frames.",
+        "Can be purchased individually or in a group.",
+        "Individual size: 25 × 29 cm (hung as a group they cover a wall space of approx. 160 cm, with a 6 cm gap between each painting)."
+      ],
+      price: "£90 each (group price £400 for all 5)",
+      status: "available"
     },
 
     /* ---------- Abstracts ---------- */
@@ -291,8 +455,9 @@
       title: "After Glow",
       details: "Acrylic on canvas",
       size: "40 × 20 in (102 × 51 cm)",
+      price: "£650",
       status: "available",
-      image: "images/artwork-02.jpg",
+      image: "images/after-glow.jpg",
       room: "images/artwork-02-room.jpg",
       setting: "living room"
     },
@@ -301,6 +466,7 @@
       title: "Between the Lines",
       details: "Acrylic on canvas",
       size: "30 × 20 in (76 × 51 cm)",
+      price: "£484",
       status: "available",
       image: "images/artwork-04.jpg",
       room: "images/artwork-04-room.jpg",
@@ -311,8 +477,9 @@
       title: "Blue Shift",
       details: "Acrylic on canvas",
       size: "30 × 20 in (76 × 51 cm)",
+      price: "£484",
       status: "available",
-      image: "images/artwork-03.jpg",
+      image: "images/blue-shift.jpg",
       room: "images/artwork-03-room.jpg",
       setting: "living room"
     },
@@ -321,6 +488,7 @@
       title: "Unfolding",
       details: "Acrylic on canvas",
       size: "30 × 20 in (76 × 51 cm)",
+      price: "£484",
       status: "available",
       image: "images/artwork-05.jpg",
       room: "images/artwork-05-room.jpg",
@@ -335,32 +503,88 @@
     { id: "abstracts",  label: "Abstracts" }
   ];
 
+  /* Flatten each group into the tiles shown, including any "beside" pictures */
+  artworks.forEach(a => {
+    if (!a.group) return;
+    a.tiles = [];
+    a.group.forEach(g => {
+      a.tiles.push({ title: g.title, image: g.image, caption: g.title });
+      if (g.beside) a.tiles.push({ title: g.beside.caption, image: g.beside.image, caption: g.beside.caption, beside: true });
+    });
+  });
+
   const works = document.getElementById("work");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+  function groupHTML(a, i, first) {
+    const subject = encodeURIComponent(`Enquiry: ${a.title}`);
+    const tiles = a.tiles.map((g, k) => `
+          <li${g.beside ? ` class="beside"` : ""}><figure>
+            <button class="view" data-i="${i}" data-k="${k}" data-view="painting" aria-label="View ${esc(g.title)} larger">
+              <img src="${esc(g.image)}" alt="${esc(g.title)}, painting by Ellie Sidwell" loading="${first ? "eager" : "lazy"}">
+            </button>
+            <figcaption>${esc(g.caption)}</figcaption>
+          </figure></li>`).join("");
+    return `
+      <article class="work group">
+        <ul class="group-grid${a.tileAspect ? " even" : ""}"${a.tileAspect ? ` style="--tile-aspect: ${a.tileAspect}"` : ""}>${tiles}
+        </ul>
+        ${a.room ? `<figure class="room">
+          <button class="view" data-i="${i}" data-view="room" aria-label="View ${esc(a.title)} on a wall">
+            <img src="${esc(a.room)}" alt="${esc(a.title)} shown together on a wall" loading="lazy">
+          </button>
+          <figcaption>${esc(a.roomCaption || "Shown together on a wall.")}</figcaption>
+        </figure>` : ""}
+        <div class="caption">
+          <div>
+            <h2>${esc(a.title)}</h2>
+            <ul class="group-info">${a.info.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
+            ${a.price ? `<p class="price">${esc(a.price)}</p>` : ""}
+          </div>
+          <a class="enquire" href="mailto:${EMAIL}?subject=${subject}">Enquire about these pieces</a>
+        </div>
+      </article>`;
+  }
+
+  function sceneHTML(a, i, first) {
+    return `
+      <article class="work scene">
+        <figure>
+          <button class="view" data-i="${i}" data-view="painting" aria-label="View ${esc(a.title)} larger">
+            <img src="${esc(a.image)}" alt="${esc(a.title)}, paintings by Ellie Sidwell" loading="${first ? "eager" : "lazy"}">
+          </button>
+          <figcaption>${esc(a.title)}.</figcaption>
+        </figure>
+      </article>`;
+  }
+
   function workHTML(a, i, first) {
+    if (a.group) return groupHTML(a, i, first);
+    if (a.scene) return sceneHTML(a, i, first);
     const meta = [a.details, a.size].filter(Boolean).join(", ");
     const status = a.status === "sold"
-      ? `<span class="status-sold">Sold</span>`
+      ? `<span class="status-sold">SOLD</span>`
       : a.status === "available" ? "Available" : "";
     const subject = encodeURIComponent(`Enquiry: ${a.title}`);
     return `
-      <article class="work">
+      <article class="work${a.room ? "" : " solo"}">
         <figure class="painting">
           <button class="view" data-i="${i}" data-view="painting" aria-label="View ${esc(a.title)} larger">
             <img src="${esc(a.image)}" alt="${esc(a.title)}, painting by Ellie Sidwell" loading="${first ? "eager" : "lazy"}">
           </button>
         </figure>
-        <figure class="room">
+        ${a.room ? `<figure class="room">
           <button class="view" data-i="${i}" data-view="room" aria-label="View ${esc(a.title)} in a room">
             <img src="${esc(a.room)}" alt="${esc(a.title)} shown hanging in a ${esc(a.setting || "room")}" loading="lazy">
           </button>
-          <figcaption>Shown in a ${esc(a.setting || "room")}. Not to scale.</figcaption>
-        </figure>
+          <figcaption>${esc(a.roomCaption || `Shown in a ${a.setting || "room"}. Not to scale.`)}</figcaption>
+        </figure>` : ""}
         <div class="caption">
           <div>
             <h2>${esc(a.title)}</h2>
             <p class="details">${esc(meta)}${meta && status ? ". " : ""}${status}</p>
+            ${a.notes ? `<ul class="group-info">${a.notes.map(t => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
+            ${a.price && a.status !== "sold" ? `<p class="price">${esc(a.price)}</p>` : ""}
           </div>
           <a class="enquire" href="mailto:${EMAIL}?subject=${subject}">Enquire about this piece</a>
         </div>
@@ -369,7 +593,7 @@
 
   const tabs = document.getElementById("tabs");
   tabs.innerHTML = SECTIONS.map(sec => {
-    const n = artworks.filter(a => a.section === sec.id).length;
+    const n = artworks.filter(a => a.section === sec.id && !a.scene).length;
     return `<button type="button" role="tab" id="tab-${sec.id}" data-section="${sec.id}" aria-controls="work" aria-selected="false">${sec.label}${n ? `<span class="count">${n}</span>` : ""}</button>`;
   }).join("");
 
@@ -410,25 +634,40 @@
   const img = document.getElementById("viewer-img");
   const title = document.getElementById("viewer-title");
   const toggles = dlg.querySelectorAll("[data-view]");
-  let current = null;
+  const toggleGroup = dlg.querySelector(".toggle");
+  let current = null, part = 0;
 
   function show(view) {
     const a = artworks[current];
-    img.src = view === "room" ? a.room : a.image;
-    img.alt = view === "room" ? `${a.title} shown hanging in a ${a.setting || "room"}` : `${a.title}, painting by Ellie Sidwell`;
+    const p = a.tiles ? a.tiles[part] : a;
+    if (!a.room) view = "painting";
+    toggleGroup.hidden = !a.room;
+    img.src = view === "room" ? a.room : p.image;
+    img.alt = view === "room" ? `${a.title} shown hanging in a ${a.setting || "room"}` : `${p.title}, painting by Ellie Sidwell`;
+    title.textContent = view === "room" ? a.title : p.title;
     toggles.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === view)));
   }
   works.addEventListener("click", e => {
     const b = e.target.closest("button.view");
     if (!b) return;
     current = +b.dataset.i;
-    title.textContent = artworks[current].title;
+    part = +(b.dataset.k || 0);
     show(b.dataset.view);
     dlg.showModal();
   });
   toggles.forEach(b => b.addEventListener("click", () => show(b.dataset.view)));
   document.getElementById("viewer-close").addEventListener("click", () => dlg.close());
   dlg.addEventListener("click", e => { if (e.target.classList.contains("viewer-stage")) dlg.close(); });
+
+  // Mailing list sign-up: placeholder until a mailing list service is connected
+  document.getElementById("signup").addEventListener("submit", e => {
+    e.preventDefault();
+    const input = document.getElementById("signup-email");
+    const note = document.getElementById("signup-note");
+    note.textContent = input.checkValidity()
+      ? "Thank you! The mailing list is launching soon."
+      : "Please enter a valid email address.";
+  });
 
   document.getElementById("year").textContent = new Date().getFullYear();
 </script>
