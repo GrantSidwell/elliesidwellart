@@ -113,10 +113,22 @@
   .caption h2 { font: italic 400 1.9rem/1.2 var(--serif); margin: 0; }
   .caption .details { color: var(--muted); font-size: .95rem; margin: .25rem 0 0; }
   .caption .enquire { font-size: .95rem; color: var(--accent); text-underline-offset: 4px; }
+  .status-sold { color: #B4443A; font-weight: 500; letter-spacing: .06em; }
   .status-sold::before {
     content: ""; display: inline-block; width: .5em; height: .5em;
     border-radius: 50%; background: #B4443A; margin-right: .5em; vertical-align: .1em;
   }
+  .caption .price { font: 400 1.35rem/1.2 var(--serif); margin: .35rem 0 0; color: var(--ink); }
+
+  /* Group of small works (e.g. a series) */
+  .work.group { grid-template-columns: 1fr; align-items: start; }
+  .group-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(.75rem, 2vw, 1.5rem); margin: 0; padding: 0; list-style: none; }
+  .group-grid figure { margin: 0; }
+  .group-grid img { width: 100%; aspect-ratio: 1; object-fit: cover; box-shadow: 0 1px 2px rgba(20,30,28,.12), 0 8px 20px -10px rgba(20,30,28,.25); }
+  .group-grid figcaption { font-size: .85rem; color: var(--muted); margin-top: .45rem; }
+  .group .room { max-width: 48rem; }
+  .group-info { list-style: none; margin: .6rem 0 0; padding: 0; color: var(--muted); font-size: .95rem; }
+  .group-info li { margin: .15rem 0; }
 
   /* Commissions */
   .commissions {
@@ -171,6 +183,7 @@
 
   @media (max-width: 760px) {
     .work { grid-template-columns: 1fr; }
+    .group-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .commissions { grid-template-columns: 1fr; }
     .site-nav { gap: 1.25rem; }
     .viewer-bar { flex-wrap: wrap; }
@@ -247,6 +260,7 @@
       title: "Tidal Light",
       details: "Acrylic on canvas",
       size: "20 × 20 in (51 × 51 cm)",
+      price: "£322",
       status: "available",
       image: "images/artwork-06.jpg",
       room: "images/artwork-06-room.jpg",
@@ -257,6 +271,7 @@
       title: "Pink Horizon",
       details: "Acrylic on canvas",
       size: "20 × 20 in (51 × 51 cm)",
+      price: "£322",
       status: "available",
       image: "images/artwork-07.jpg",
       room: "images/artwork-07-room.jpg",
@@ -267,6 +282,7 @@
       title: "Quiet",
       details: "Acrylic on canvas",
       size: "30 × 30 in (76 × 76 cm)",
+      price: "£725",
       status: "available",
       image: "images/artwork-08.jpg",
       room: "images/artwork-08-room.jpg",
@@ -279,10 +295,29 @@
       title: "Between the Hills",
       details: "Acrylic on canvas",
       size: "40 × 20 in (102 × 51 cm)",
-      status: "available",
+      status: "sold",
       image: "images/artwork-09.jpg",
       room: "images/artwork-09-room.jpg",
       setting: "living room"
+    },
+    {
+      /* A group: several small paintings shown together, with one wall picture */
+      section: "landscapes",
+      title: "Lines on the Land 1 to 8",
+      group: [1, 2, 3, 4, 5, 6, 7, 8].map(n => ({
+        title: "Lines on the Land " + n,
+        image: "images/lines-on-the-land-" + n + ".jpg"
+      })),
+      room: "images/lines-on-the-land-wall.jpg",
+      setting: "wall",
+      info: [
+        "Original paintings. Mixed media (collage, gold, bronze and silver leaf) and acrylic on wood panel.",
+        "Size: 20 × 20 cm",
+        "Sold individually or as a group.",
+        "Unframed (framing on request)."
+      ],
+      price: "£50 each (group price for all 8 paintings £360)",
+      status: "available"
     },
 
     /* ---------- Abstracts ---------- */
@@ -291,6 +326,7 @@
       title: "After Glow",
       details: "Acrylic on canvas",
       size: "40 × 20 in (102 × 51 cm)",
+      price: "£650",
       status: "available",
       image: "images/artwork-02.jpg",
       room: "images/artwork-02-room.jpg",
@@ -301,6 +337,7 @@
       title: "Between the Lines",
       details: "Acrylic on canvas",
       size: "30 × 20 in (76 × 51 cm)",
+      price: "£484",
       status: "available",
       image: "images/artwork-04.jpg",
       room: "images/artwork-04-room.jpg",
@@ -311,6 +348,7 @@
       title: "Blue Shift",
       details: "Acrylic on canvas",
       size: "30 × 20 in (76 × 51 cm)",
+      price: "£484",
       status: "available",
       image: "images/artwork-03.jpg",
       room: "images/artwork-03-room.jpg",
@@ -321,6 +359,7 @@
       title: "Unfolding",
       details: "Acrylic on canvas",
       size: "30 × 20 in (76 × 51 cm)",
+      price: "£484",
       status: "available",
       image: "images/artwork-05.jpg",
       room: "images/artwork-05-room.jpg",
@@ -338,10 +377,41 @@
   const works = document.getElementById("work");
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
+  function groupHTML(a, i, first) {
+    const subject = encodeURIComponent(`Enquiry: ${a.title}`);
+    const tiles = a.group.map((g, k) => `
+          <li><figure>
+            <button class="view" data-i="${i}" data-k="${k}" data-view="painting" aria-label="View ${esc(g.title)} larger">
+              <img src="${esc(g.image)}" alt="${esc(g.title)}, painting by Ellie Sidwell" loading="${first ? "eager" : "lazy"}">
+            </button>
+            <figcaption>${esc(g.title)}</figcaption>
+          </figure></li>`).join("");
+    return `
+      <article class="work group">
+        <ul class="group-grid">${tiles}
+        </ul>
+        <figure class="room">
+          <button class="view" data-i="${i}" data-view="room" aria-label="View ${esc(a.title)} on a wall">
+            <img src="${esc(a.room)}" alt="${esc(a.title)} shown together on a ${esc(a.setting || "wall")}" loading="lazy">
+          </button>
+          <figcaption>Shown together on a ${esc(a.setting || "wall")}.</figcaption>
+        </figure>
+        <div class="caption">
+          <div>
+            <h2>${esc(a.title)}</h2>
+            <ul class="group-info">${a.info.map(t => `<li>${esc(t)}</li>`).join("")}</ul>
+            ${a.price ? `<p class="price">${esc(a.price)}</p>` : ""}
+          </div>
+          <a class="enquire" href="mailto:${EMAIL}?subject=${subject}">Enquire about these pieces</a>
+        </div>
+      </article>`;
+  }
+
   function workHTML(a, i, first) {
+    if (a.group) return groupHTML(a, i, first);
     const meta = [a.details, a.size].filter(Boolean).join(", ");
     const status = a.status === "sold"
-      ? `<span class="status-sold">Sold</span>`
+      ? `<span class="status-sold">SOLD</span>`
       : a.status === "available" ? "Available" : "";
     const subject = encodeURIComponent(`Enquiry: ${a.title}`);
     return `
@@ -361,6 +431,7 @@
           <div>
             <h2>${esc(a.title)}</h2>
             <p class="details">${esc(meta)}${meta && status ? ". " : ""}${status}</p>
+            ${a.price && a.status !== "sold" ? `<p class="price">${esc(a.price)}</p>` : ""}
           </div>
           <a class="enquire" href="mailto:${EMAIL}?subject=${subject}">Enquire about this piece</a>
         </div>
@@ -410,19 +481,21 @@
   const img = document.getElementById("viewer-img");
   const title = document.getElementById("viewer-title");
   const toggles = dlg.querySelectorAll("[data-view]");
-  let current = null;
+  let current = null, part = 0;
 
   function show(view) {
     const a = artworks[current];
-    img.src = view === "room" ? a.room : a.image;
-    img.alt = view === "room" ? `${a.title} shown hanging in a ${a.setting || "room"}` : `${a.title}, painting by Ellie Sidwell`;
+    const p = a.group ? a.group[part] : a;
+    img.src = view === "room" ? a.room : p.image;
+    img.alt = view === "room" ? `${a.title} shown hanging in a ${a.setting || "room"}` : `${p.title}, painting by Ellie Sidwell`;
+    title.textContent = view === "room" ? a.title : p.title;
     toggles.forEach(b => b.setAttribute("aria-pressed", String(b.dataset.view === view)));
   }
   works.addEventListener("click", e => {
     const b = e.target.closest("button.view");
     if (!b) return;
     current = +b.dataset.i;
-    title.textContent = artworks[current].title;
+    part = +(b.dataset.k || 0);
     show(b.dataset.view);
     dlg.showModal();
   });
