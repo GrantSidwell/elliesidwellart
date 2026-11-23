@@ -133,6 +133,8 @@
   .group-grid figcaption { font-size: .85rem; color: var(--muted); margin-top: .45rem; }
   .group .room { max-width: 48rem; }
   .group-grid .beside img { box-shadow: none; }
+  .group-grid.even { align-items: start; }
+  .group-grid.even img { aspect-ratio: var(--tile-aspect); object-fit: cover; }
 
   /* A painting with no room picture: details sit beside it */
   .work.solo .caption { grid-column: 2; flex-direction: column; align-items: flex-start; }
@@ -337,13 +339,6 @@
       room: "images/big-sky-wall.jpg",
       roomCaption: "Big Sky on the wall."
     },
-    {
-      /* scene: just a picture, shown full width under the paintings above */
-      section: "seascapes",
-      scene: true,
-      title: "Marshes and Big Sky together",
-      image: "images/marshes-big-sky-together.jpg"
-    },
     ...["Moon", "Bay", "Cove"].map(t => ({
       section: "seascapes",
       title: t,
@@ -403,6 +398,7 @@
         title: "Chobham Common " + n,
         image: "images/chobham-common-" + n + ".jpg"
       })),
+      tileAspect: "4 / 5",   /* show every painting at the same size */
       room: "images/chobham-common-wall.jpg",
       roomCaption: "Chobham Common 1 to 4 on the wall.",
       info: [
@@ -421,9 +417,7 @@
       group: [1, 2, 3, 4, 5].map(n => ({
         title: "Horizon " + n,
         image: "images/horizon-" + n + ".jpg",
-        beside: n === 1 ? { image: "images/horizon-1-frame.jpg", caption: "Horizon 1 in its frame" }
-              : n === 2 ? { image: "images/horizon-wall-2.jpg", caption: "Horizon series on the wall" }
-              : null
+        beside: n === 2 ? { image: "images/horizon-wall-2.jpg", caption: "Horizon series on the wall" } : null
       })),
       info: [
         "Original paintings. Mixed media collage & acrylic on wood panel.",
@@ -513,7 +507,7 @@
           </figure></li>`).join("");
     return `
       <article class="work group">
-        <ul class="group-grid">${tiles}
+        <ul class="group-grid${a.tileAspect ? " even" : ""}"${a.tileAspect ? ` style="--tile-aspect: ${a.tileAspect}"` : ""}>${tiles}
         </ul>
         ${a.room ? `<figure class="room">
           <button class="view" data-i="${i}" data-view="room" aria-label="View ${esc(a.title)} on a wall">
