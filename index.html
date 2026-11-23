@@ -239,10 +239,11 @@
     <div>
       <h1>Ellie Sidwell</h1>
       <p>Join the studio mailing list and see new works 48 hours before anyone else, hot off the press! Be the first to know about discounts and offers.</p>
-      <!-- Placeholder: not connected to a mailing list service yet, so nothing is sent -->
+      <!-- Sign-ups go to /api/subscribe, which adds them to the MailerLite group -->
       <form class="signup" id="signup" novalidate>
         <label class="visually-hidden" for="signup-email">Email address</label>
         <input type="email" id="signup-email" name="email" placeholder="Your email address" autocomplete="email" required>
+        <input type="text" name="website" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true">
         <button type="submit">Join</button>
       </form>
       <p class="signup-note" id="signup-note" role="status"></p>
@@ -659,14 +660,34 @@
   document.getElementById("viewer-close").addEventListener("click", () => dlg.close());
   dlg.addEventListener("click", e => { if (e.target.classList.contains("viewer-stage")) dlg.close(); });
 
-  // Mailing list sign-up: placeholder until a mailing list service is connected
-  document.getElementById("signup").addEventListener("submit", e => {
+  // Mailing list sign-up: sends the email to /api/subscribe (MailerLite)
+  const signup = document.getElementById("signup");
+  signup.addEventListener("submit", async e => {
     e.preventDefault();
     const input = document.getElementById("signup-email");
     const note = document.getElementById("signup-note");
-    note.textContent = input.checkValidity()
-      ? "Thank you! The mailing list is launching soon."
-      : "Please enter a valid email address.";
+    const button = signup.querySelector("button");
+    if (!input.checkValidity()) { note.textContent = "Please enter a valid email address."; return; }
+    button.disabled = true;
+    note.textContent = "Signing you up…";
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: input.value, website: signup.website.value })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        note.textContent = "Thank you! You're on the list.";
+        signup.reset();
+      } else {
+        note.textContent = data.error || "Something went wrong. Please try again in a moment.";
+      }
+    } catch {
+      note.textContent = "Something went wrong. Please try again in a moment.";
+    } finally {
+      button.disabled = false;
+    }
   });
 
   document.getElementById("year").textContent = new Date().getFullYear();
